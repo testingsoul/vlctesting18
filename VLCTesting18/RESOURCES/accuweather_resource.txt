@@ -1,0 +1,93 @@
+*** Settings ***
+Library           SeleniumLibrary
+Library           OperatingSystem
+Library           String
+
+*** Keywords ***
+Abrir Navegador
+    [Documentation]    Abrir Navegador
+    ...    Ir a la página Web
+    ...    Maximizar
+    ...    Aceptar Permisos
+    Open Browser    ${url}
+    Maximize Browser Window
+    Aceptar Cookies
+
+Aceptar Cookies
+    [Documentation]    Selecciona el elemento con el Texto "Allow" presente en el navegador
+    Click Element    xpath://*[@class="fc-buttons"]/div[1]
+    Click Element    class:continue
+
+Analizar Precipitaciones
+    [Arguments]    ${precip}
+    [Documentation]    Analiza la probabilidad de precipitación con los valores definidos
+    Run Keyword And Continue On Failure    Should Be True    ${precip}<=${precipitacion}    La probabilidad de precipitación está por encima del ${precipitacion}%
+
+Analizar temperatura
+    [Arguments]    ${t_max}    ${t_min}
+    [Documentation]    Analiza la temperatura con los valores definidos
+    Run Keyword And Continue On Failure    Should Be True    ${t_max}<=${temperatura["max"]}    Temperatura máxima por encima de ${temperatura["max"]}
+    Run Keyword And Continue On Failure    Should Be True    ${t_min}<=${temperatura["max"]}    Temperatura mínima por encima de ${temperatura["max"]}
+    Run Keyword And Continue On Failure    Should Be True    ${t_max}>=${temperatura["min"]}    Temperatura máxima por debajo de ${temperatura["min"]}
+    Run Keyword And Continue On Failure    Should Be True    ${t_min}>=${temperatura["min"]}    Temperatura mínima por debajo de ${temperatura["min"]}
+
+Ir a Ciudad
+    [Documentation]    Ir a la cuidad definida en el fichero de configuración
+    Click Element    xpath://*[text()="Seleccione una ciudad"]
+    Log    Buscando región    console=True
+    Click Element    xpath://*[text()="${region}"]
+    Log    Buscando en ${region}    console=True
+    Click Element    xpath://*[text()="${ciudad}"]
+    Log    El tiempo en ${ciudad}    console=True
+
+Ir a el tiempo hoy
+    [Documentation]    Seleccionar el tiempo Hoy
+    Click Element    xpath://*[text()='Hoy']
+
+Obtener Alertas
+    [Documentation]    Información de si hay o no alertas y cuales son
+    ${warn}    Run Keyword And Return Status    Page Should Contain Element    class:panel-warning
+    ${warn_text}    Run Keyword If    ${warn}    Get Text    class:panel-warning
+    ${aviso}    Set Variable If    ${warn}    ${warn_text}    No hay peligro
+    Log    \nAlertas: ${aviso}\n    console=True
+    [Return]    ${warn}    ${aviso}
+
+Obtener Resumen
+    [Documentation]    Obtiene el resumen definido en el tiempo Hoy
+    ${resumen}    Get Text    xpath://div[@id='feed-tabs']/ul/li//span[@class='cond']
+    [Return]    ${resumen}
+
+Obtener Temperaturas
+    [Documentation]    Devuelve las temeperaturas máximas y mínimas
+    ${t_max}    Get Text    xpath://div[@class="day"]//span[@class="large-temp"]
+    ${t_min}    Get Text    xpath://div[@class="night"]//span[@class="large-temp"]
+    ${t_max}    Get Regexp Matches    ${t_max}    \-?\\d{1,2}
+    ${t_min}    Get Regexp Matches    ${t_min}    \-?\\d{1,2}
+    Log    Temperaturas:\n\t${t_max}\n\t${t_min}\n    console=True
+    [Return]    ${t_max[0]}    ${t_min[0]}
+
+Obtener probabilidad Precipitación
+    [Documentation]    Devuelve la probablidad de precipitación en formato texto
+    ${precip}    Get Text    xpath://div[@class="day"]//span[@class="precip"]
+    ${precip}    Get Regexp Matches    ${precip}    \\d{1,3}
+    Log    \n${precip}\n    console=True
+    [Return]    ${precip[0]}
+
+Suite Setup
+    [Documentation]    Abrimos la url definida
+    ...
+    ...    Vamos a la cuidad definida
+    ...
+    ...    Seleccionamos el tiempo hoy
+    ...
+    ...    Pasamos el resumen a un fichero de texto
+    Abrir Navegador
+    Ir a Ciudad
+    Ir a el tiempo hoy
+    ${resumen}    Obtener Resumen
+    Set Suite Variable    ${out_path}    ${EXECDIR}/clima.txt
+    Create File    ${out_path}    El tiempo en ${ciudad}\n${resumen}\n
+
+Suite Teardown
+    [Documentation]    Cerrar Navegador
+    Close Browser

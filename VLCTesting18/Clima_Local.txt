@@ -1,0 +1,29 @@
+*** Settings ***
+Documentation     Test Suite con información relativa a una localidad dada
+Suite Setup       Suite Setup
+Suite Teardown    Suite Teardown
+Resource          RESOURCES/accuweather_resource.txt
+
+*** Test Cases ***
+Alertas
+    [Documentation]    No debe haber alertas en la cuidad a analizar
+    ...
+    ...    Se incluye información al fichero de salida
+    [Tags]    ALERT
+    ${aviso}    ${aviso_txt}    Obtener Alertas
+    Append To File    ${out_path}    Alertas: ${aviso_txt}\n
+    Should Not Be True    ${aviso}    msg=¡¡¡¡Alerta!!!! ${aviso_txt}
+
+Temperatura
+    [Documentation]    Se añaden las temperaturas máxima y mínima al fichero de salida y se hace un análisis en función de las temperaturas definidas en el fichero de configuración
+    [Tags]    TEMP
+    ${t_max}    ${t_min}    Obtener Temperaturas
+    Append To File    ${out_path}    Temperaturas:\t${t_min}º mín./ ${t_max}º máx.\n
+    Analizar temperatura    ${t_max}    ${t_min}
+
+Precipitaciones
+    [Documentation]    Se añaden la probabilidad de precipitación al fichero de salida y se hace un análisis en función de la probabilidad de precipitación definida en el fichero de configuración
+    [Tags]    PRECIP
+    ${precip}    Obtener probabilidad Precipitación
+    Append To File    ${out_path}    Precipitaciones: ${precip}%\n
+    Analizar Precipitaciones    ${precip}

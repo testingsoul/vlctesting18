@@ -1,0 +1,18 @@
+## municipio.yaml
+
+url: 'https://www.accuweather.com/es/es/spain-weather'
+
+region: 'Comunidad Valenciana'
+ciudad: Valencia
+
+temperatura:
+    max : 30
+    min : 5
+    
+precipitacion : 50
+
+
+
+
+
+
