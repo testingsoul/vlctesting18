@@ -1,0 +1,11 @@
+pip install robotframework
+pip install selenium
+pip install robotframework-seleniumlibrary
+pip install robotframework-ride
+pip install pyyaml
+
+geckodriver
+chromedriver
+
+firefox
+chrome
