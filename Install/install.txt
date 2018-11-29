@@ -1,11 +1,46 @@
+************************
+Python 2.7
+************************
+
 pip install robotframework
 pip install selenium
 pip install robotframework-seleniumlibrary
 pip install robotframework-ride
 pip install pyyaml
 
-geckodriver
-chromedriver
+************************
+wxpython
+************************
 
+
+Windows
+************************
+
+https://sourceforge.net/projects/wxpython/files/wxPython/2.8.12.1/
+
+--> wxPython2.8-win64-unicode-2.8.12.1-py27
+
+Linux
+************************
+
+sudo apt-get install python-wxgtk2.8
+
+MacOS
+************************
+
+https://sourceforge.net/projects/wxpython/files/wxPython/2.8.12.1/
+--> wxPython2.8-osx-unicode-2.8.12.1-universal-py2.7.dmg
+
+Configurar python para trabajar 32 bits --> defaults write com.apple.versioner.python Prefer-32-Bit -bool yes 
+
+************************
+Browser
+************************
 firefox
 chrome
+
+Drivers
+************************
+geckodriver --> https://github.com/mozilla/geckodriver/releases
+chromedriver --> http://chromedriver.chromium.org/
+
